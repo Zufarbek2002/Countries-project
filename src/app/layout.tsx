@@ -22,6 +22,7 @@ export const PageContext = React.createContext({
   setPage: (page: number) => {},
   filtered: [],
   setFiltered: (filtered: []) => {},
+  loading: false,
 });
 
 export default function RootLayout({
@@ -33,14 +34,17 @@ export default function RootLayout({
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [filtered, setFiltered] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `https://countries-restapi.vercel.app/all?page=${page}&limit=8`
       );
       const data = await res.data;
       setData(data.data);
+      setLoading(false);
     } catch (error) {
       console.log((error as Error).message);
     }
@@ -66,6 +70,7 @@ export default function RootLayout({
             setPage,
             filtered,
             setFiltered,
+            loading,
           }}
         >
           <header>
