@@ -1,11 +1,41 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import searchIcon from "@/assets/icons/search.svg";
 import { PageContext } from "@/app/layout";
+import axios from "axios";
 
 const CountriesHeader = () => {
-  const { mode } = React.useContext(PageContext);
+  const { mode, setFiltered, page, data } = React.useContext(PageContext);
+
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value.toLowerCase();
+    try {
+      const res = await axios.get(
+        `https://countries-restapi.vercel.app/name/${text}?page=${page}&limit=8`
+      );
+      const data = await res.data;
+      setFiltered(data.data);
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+  };
+  const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const text = e.target.value;
+    if (text == "All") {
+      setFiltered(data as any);
+    } else {
+      try {
+        const res = await axios.get(
+          `https://countries-restapi.vercel.app/region/${text}?page=${page}&limit=8`
+        );
+        const data = await res.data;
+        setFiltered(data.data);
+      } catch (error) {
+        console.log((error as Error).message);
+      }
+    }
+  };
 
   return (
     <div>
@@ -20,6 +50,7 @@ const CountriesHeader = () => {
             type="text"
             placeholder="Search for a country…"
             className="outline-none w-full bg-inherit"
+            onChange={(e) => handleSearch(e)}
           />
         </div>
         <div
@@ -28,16 +59,15 @@ const CountriesHeader = () => {
           }`}
         >
           <select
-            name=""
-            id=""
             className="select_filter w-full sm:w-auto py-5 px-6 cursor-pointer outline-none bg-inherit"
+            onChange={(e) => handleChange(e)}
           >
             <option value="All">Filter by Region</option>
             <option value="Africa">Africa</option>
-            <option value="Africa">America</option>
-            <option value="Africa">Asia</option>
-            <option value="Africa">Europe</option>
-            <option value="Africa">Oceania</option>
+            <option value="America">America</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="Oceania">Oceania</option>
           </select>
         </div>
       </div>

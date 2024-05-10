@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 // import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Header } from "@/components/header/Header";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +16,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const PageContext = React.createContext({
   mode: false,
   setMode: (mode: boolean) => {},
+  data: [],
+  setData: (data: any | never[]) => {},
+  page: 1,
+  setPage: (page: number) => {},
+  filtered: [],
+  setFiltered: (filtered: []) => {},
 });
 
 export default function RootLayout({
@@ -22,11 +30,44 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [mode, setMode] = useState(false);
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [filtered, setFiltered] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        `https://countries-restapi.vercel.app/all?page=${page}&limit=8`
+      );
+      const data = await res.data;
+      setData(data.data);
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page]);
+  useEffect(() => {
+    setFiltered(data);
+  }, [data, page]);
 
   return (
     <html lang="en">
       <body className={`${inter.className} ${mode ? "body_dark-mode" : ""}`}>
-        <PageContext.Provider value={{ mode, setMode }}>
+        <PageContext.Provider
+          value={{
+            mode,
+            setMode,
+            data,
+            setData,
+            page,
+            setPage,
+            filtered,
+            setFiltered,
+          }}
+        >
           <header>
             <Header />
           </header>
