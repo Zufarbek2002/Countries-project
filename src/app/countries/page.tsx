@@ -4,7 +4,7 @@ import CountriesMain from "@/components/countries/main/CountriesMain";
 
 const Countries = () => {
   return (
-    <div id="countries" className="mb-10">
+    <div id="countries">
       <CountriesHeader />
       <CountriesMain />
     </div>

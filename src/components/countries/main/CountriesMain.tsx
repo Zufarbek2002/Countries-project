@@ -2,6 +2,7 @@
 import React from "react";
 import CountryBox from "./CountryBox";
 import { PageContext } from "@/app/layout";
+import Pagination from "./Pagination";
 
 const CountriesMain = () => {
   const { data, page, setPage, filtered } = React.useContext(PageContext);
@@ -13,18 +14,7 @@ const CountriesMain = () => {
         ))}
       </div>
 
-      <div className="flex">
-        <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          prev
-        </button>
-        <span>{page}</span>
-        <button
-          disabled={page >= Math.round(250 / 8)}
-          onClick={() => setPage(page + 1)}
-        >
-          next
-        </button>
-      </div>
+      <Pagination />
     </div>
   );
 };
